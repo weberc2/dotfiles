@@ -10,4 +10,4 @@ export PS1="$WHITE_ON_GREEN $BASEDIR$WHITE_ON_GREEN $DOLLAR_OR_POUND $RESET "
 
 # Go
 export GOPATH=$HOME/Projects
-export PATH=$PATH:$GOPATH/bin
+export PATH=$PATH:/usr/lib/go/bin:$GOPATH/bin

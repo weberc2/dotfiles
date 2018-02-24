@@ -10,18 +10,26 @@ import (
 )
 
 func createSymlink(src, dst string) error {
-	relSrc, err := filepath.Rel(".", src)
+	absSrc, err := filepath.Abs(src)
 	if err != nil {
 		return err
 	}
 
-	dst = strings.Replace(dst, "~", os.Getenv("HOME"), -1)
-
-	if err := os.MkdirAll(filepath.Dir(dst), 0700); err != nil {
+	absDst, err := filepath.Abs(strings.Replace(
+		dst,
+		"~",
+		os.Getenv("HOME"),
+		-1,
+	))
+	if err != nil {
 		return err
 	}
 
-	return os.Symlink(relSrc, dst)
+	if err := os.MkdirAll(filepath.Dir(absDst), 0700); err != nil {
+		return err
+	}
+
+	return os.Symlink(absSrc, absDst)
 }
 
 func main() {

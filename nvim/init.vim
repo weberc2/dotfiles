@@ -1,16 +1,5 @@
 call plug#begin('~/.config/nvim/bundle')
 Plug 'fatih/vim-go'
-Plug 'altercation/vim-colors-solarized'
-Plug 'kchmck/vim-coffee-script'
-Plug 'scrooloose/nerdtree'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'racer-rust/vim-racer'
-Plug 'rust-lang/rust.vim'
-" Plug 'reasonml/vim-reason'
-Plug 'fsharp/vim-fsharp', {
-      \ 'for': 'fsharp',
-      \ 'do':  'make fsautocomplete',
-      \}
 call plug#end()
 
 " Configuration file for vim
@@ -32,57 +21,15 @@ set shiftwidth=4
 set expandtab
 set ru nu
 
-" CoffeeScript uses 2 spaces (presumably for obfuscation?)
-autocmd Filetype coffee setlocal ts=2 sts=2 sw=2
-
-" Enable solarized theme
-syntax enable
-set background=light
-colorscheme solarized
-
 " Highlight and strip (on save) trailing whitespace
 :highlight ExtraWhitespace ctermbg=red guibg=red
 :match ExtraWhitespace /\s\+$/
 autocmd BufWritePre * :%s/\s\+$//e
 
-execute pathogen#infect()
-syntax on
-filetype plugin indent on
-
- " python support (this lets neovim run plugins written in python)
-let g:python3_host_prog = '/usr/local/bin/python3.6'
-
-" highlight column 80
+" highlight column 80 (6 is dark cyan; see `:help ctermbg` for details)
 set colorcolumn=80
-
-" RustFmt on save
-let g:rustfmt_autosave = 1
-
-" FZF
-set splitright
-let g:fzf_action = {
-  \ 'enter': 'vsplit',
-  \ 'ctrl-t': 'tab split',
-  \ 'ctrl-x': 'split' }
-let g:fzf_layout = { 'window': 'enew' }
-let g:fzf_layout = { 'window': '-tabnew' }
-let g:fzf_layout = { 'down': '~40%' }
-nnoremap <c-p> :FZF<cr>
+highlight ColorColumn ctermbg=6
 
 " A recent upgrade to neovim seems to have changed the default mouse scrolling
 " behavior (scrolling in vim vs scrolling through my terminal's buffer)
 set mouse=a
-
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_python_python_exec = '/usr/local/bin/python3.6'
-let g:syntastic_enable_racket_racket_checker = 1
-function Py2()
-  let g:syntastic_python_python_exec = '/usr/local/bin/python2.7'
-endfunction

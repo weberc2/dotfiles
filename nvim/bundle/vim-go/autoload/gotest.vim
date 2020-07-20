@@ -1,3 +1,7 @@
+" don't spam the user when Vim is started in Vi compatibility mode
+let s:cpo_save = &cpo
+set cpo&vim
+
 " Write a Go file to a temporary directory and append this directory to $GOPATH.
 "
 " The file will written to a:path, which is relative to the temporary directory,
@@ -14,16 +18,23 @@ fun! gotest#write_file(path, contents) abort
 
   call mkdir(fnamemodify(l:full_path, ':h'), 'p')
   call writefile(a:contents, l:full_path)
-  exe 'cd ' . l:dir . '/src'
-  silent exe 'e ' . a:path
+  call go#util#Chdir(l:dir . '/src')
+
+  silent exe 'e! ' . a:path
 
   " Set cursor.
   let l:lnum = 1
   for l:line in a:contents
-    let l:m = match(l:line, '')
+    let l:m = stridx(l:line, "\x1f")
     if l:m > -1
-      call setpos('.', [0, l:lnum, l:m, 0])
-      call setline('.', substitute(getline('.'), '', '', ''))
+      let l:byte = line2byte(l:lnum) + l:m
+      exe 'goto '. l:byte
+      call setline('.', substitute(getline('.'), "\x1f", '', ''))
+      silent noautocmd w!
+
+      call go#lsp#DidClose(expand('%:p'))
+      call go#lsp#DidOpen(expand('%:p'))
+
       break
     endif
 
@@ -38,15 +49,21 @@ endfun
 " The file will be copied to a new GOPATH-compliant temporary directory and
 " loaded as the current buffer.
 fun! gotest#load_fixture(path) abort
+  if go#util#has_job()
+    call go#lsp#CleanWorkspaces()
+  endif
   let l:dir = go#util#tempdir("vim-go-test/testrun/")
   let $GOPATH .= ':' . l:dir
   let l:full_path = l:dir . '/src/' . a:path
 
   call mkdir(fnamemodify(l:full_path, ':h'), 'p')
-  exe 'cd ' . l:dir . '/src'
+  call go#util#Chdir(l:dir . '/src')
   silent exe 'noautocmd e ' . a:path
   silent exe printf('read %s/test-fixtures/%s', g:vim_go_root, a:path)
   silent noautocmd w!
+  if go#util#has_job()
+    call go#lsp#AddWorkspaceDirectory(fnamemodify(l:full_path, ':p:h'))
+  endif
 
   return l:dir
 endfun
@@ -67,7 +84,9 @@ fun! gotest#assert_buffer(skipHeader, want) abort
     for l:lnum in range(0, len(l:buffer) - 1)
       " Bit rudimentary, but works reasonably well.
       if match(l:buffer[l:lnum], '^\v(func|var|const|import \(|\))') > -1
-        let l:buffer = l:buffer[l:lnum:]
+        " vint bug: https://github.com/Kuniwak/vint/issues/179
+        " vint: -ProhibitUsingUndeclaredVariable
+        let l:buffer = l:buffer[l:lnum:len(l:buffer)]
         break
       endif
     endfor
@@ -100,5 +119,36 @@ fun! gotest#assert_fixture(path) abort
   call gotest#assert_buffer(0, l:want)
 endfun
 
+func! gotest#assert_quickfix(got, want) abort
+  call assert_equal(len(a:want), len(a:got), "number of errors")
+  if len(a:want) != len(a:got)
+    return assert_equal(a:want, a:got)
+  endif
+
+  let l:retval = 0
+  let i = 0
+
+  while i < len(a:want)
+    let want_item = a:want[i]
+    let got_item = a:got[i]
+    let i += 1
+
+    let l:retval = assert_equal(want_item.bufnr, got_item.bufnr, "bufnr") || l:retval
+    let l:retval = assert_equal(want_item.lnum, got_item.lnum, "lnum") || l:retval
+    let l:retval = assert_equal(want_item.col, got_item.col, "col") || l:retval
+    let l:retval = assert_equal(want_item.vcol, got_item.vcol, "vcol") || l:retval
+    let l:retval = assert_equal(want_item.nr, got_item.nr, "nr") || l:retval
+    let l:retval = assert_equal(want_item.pattern, got_item.pattern, "pattern") || l:retval
+    let l:retval = assert_equal(want_item.text, got_item.text, "text") || l:retval
+    let l:retval = assert_equal(want_item.type, got_item.type, "type") || l:retval
+    let l:retval = assert_equal(want_item.valid, got_item.valid, "valid") || l:retval
+  endwhile
+
+  return l:retval
+endfunc
+
+" restore Vi compatibility settings
+let &cpo = s:cpo_save
+unlet s:cpo_save
 
 " vim: sw=2 ts=2 et

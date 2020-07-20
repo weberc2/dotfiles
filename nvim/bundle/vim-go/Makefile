@@ -1,20 +1,23 @@
-all: install test lint
+VIMS ?= vim-8.0 vim-8.2 nvim
+
+all: install lint test
 
 install:
-	@echo "==> Installing Vims"
-	@./scripts/install-vim vim-7.4
-	@./scripts/install-vim vim-8.0
-	@./scripts/install-vim nvim
+	@echo "==> Installing Vims: $(VIMS)"
+	@for vim in $(VIMS); do \
+		./scripts/install-vim $$vim; \
+		./scripts/install-tools $$vim; \
+	done
 
 test:
-	@echo "==> Running tests"
-	@./scripts/test vim-7.4
-	@./scripts/test vim-8.0
-	@./scripts/test nvim
+	@echo "==> Running tests for $(VIMS)"
+	@for vim in $(VIMS); do \
+		./scripts/test $$vim; \
+	done
 
 lint:
 	@echo "==> Running linting tools"
-	@./scripts/lint vim-8.0
+	@./scripts/lint vim-8.2
 
 docker:
 	@echo "==> Building/starting Docker container"
@@ -23,6 +26,5 @@ docker:
 clean:
 	@echo "==> Cleaning /tmp/vim-go-test"
 	@rm -rf /tmp/vim-go-test
-
 
 .PHONY: all test install clean lint docker

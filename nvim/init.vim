@@ -2,6 +2,9 @@ call plug#begin('~/.config/nvim/bundle')
 Plug 'fatih/vim-go'
 call plug#end()
 
+" Set the background
+set background=light
+
 " Configuration file for vim
 set modelines=0		" CVE-2007-2438
 

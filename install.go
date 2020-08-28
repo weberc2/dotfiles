@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/fatih/color"
 	"io/ioutil"
 	"log"
 	"os"
@@ -43,14 +44,44 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Find the lengths of the longest keys and values. These will be used to
+	// pad the output columns.
+	longestSrc := 0
+	longestDst := 0
 	for src, dst := range mappings {
+		if len(src) > longestSrc {
+			longestSrc = len(src)
+		}
+		if len(dst) > longestDst {
+			longestDst = len(dst)
+		}
+	}
+
+	// Create a symlink for each mapping ignoring existing symlinks.
+	for src, dst := range mappings {
+		paddingSrc := strings.Repeat(" ", longestSrc-len(src))
 		if err := createSymlink(src, dst); err != nil {
-			log.Printf(
-				"Error creating symlink for '%s' -> '%s': %v\n",
-				src,
-				dst,
-				err,
-			)
+			paddingDst := strings.Repeat(" ", longestDst-len(dst))
+			if os.IsExist(err) {
+				color.Green(
+					"%s%s -> %s%s (Already exists)",
+					src,
+					paddingSrc,
+					dst,
+					paddingDst,
+				)
+			} else {
+				color.Red(
+					"%s%s -> %s:%s %v\n",
+					src,
+					paddingSrc,
+					dst,
+					paddingDst,
+					err,
+				)
+			}
+		} else {
+			color.Green("%s%s -> %s", src, paddingSrc, dst)
 		}
 	}
 }

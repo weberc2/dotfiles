@@ -1,14 +1,7 @@
-[core]
-	excludesfile = /Users/cweber/.gitignore_global
-[filter "lfs"]
-	clean = git-lfs clean %f
-	smudge = git-lfs smudge %f
-	required = true
 [user]
-	name = ns-cweber
-	email = cweber@narrativescience.com
+	name = Craig Weber
+	email = craig.weber@tempus.com
 [alias]
-	snake = ! /Users/cweber/.snakegit/vendor/python/bin/snake
 	st = status
 [push]
 	default = matching

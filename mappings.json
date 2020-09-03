@@ -3,5 +3,6 @@
     "profile": "~/.profile",
     "nvim": "~/.config/nvim",
     "gitconfig": "~/.gitconfig",
-    "shell.nix": "~/shell.nix"
+    "default.nix": "~/default.nix",
+    "alacritty.yml": "~/.config/alacritty.yml"
 }

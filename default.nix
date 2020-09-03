@@ -10,6 +10,7 @@ let
     nixpkgs.cargo
     nixpkgs.vscode
     nixpkgs.jq
+    nixpkgs.tmux
   ];
 
 in

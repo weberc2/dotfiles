@@ -2,3 +2,9 @@ live_config_reload: true
 key_bindings:
   - { key: Left,  mods: Alt, chars: "\x1bb" }
   - { key: Right, mods: Alt, chars: "\x1bf" }
+shell:
+  program: /bin/bash
+  args:
+    - --login
+    - -c
+    - "nix-shell --run tmux"

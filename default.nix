@@ -16,9 +16,11 @@ let
     nixpkgs.tmux
     nixpkgs.postgresql # psql
     nixpkgs.oathToolkit # oathtool (automatically generate MFA codes)
+    nixpkgs.awscli
 
     nixpkgs.kubectl
     nixpkgs.kubernetes-helm
+    nixpkgs.kubectx
   ];
 
 in

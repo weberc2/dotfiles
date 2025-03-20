@@ -1,5 +1,5 @@
-call plug#begin('~/.config/nvim/bundle')
-Plug 'fatih/vim-go'
+call plug#begin()
+Plug 'fatih/vim-go', {'do': ':GoUpdateBinaries'}
 call plug#end()
 
 " Set the background
@@ -8,8 +8,8 @@ set background=light
 " Configuration file for vim
 set modelines=0		" CVE-2007-2438
 
-" Normally we use vim-extensions. If you want true vi-compatibility
-" remove change the following statements
+" Normally we use vim-extensions. If you want true vi-compatibility remove
+" change the following statements
 set nocompatible	" Use Vim defaults instead of 100% vi compatibility
 set backspace=2		" more powerful backspacing
 
@@ -29,10 +29,10 @@ set ru nu
 :match ExtraWhitespace /\s\+$/
 autocmd BufWritePre * :%s/\s\+$//e
 
-" highlight column 80 (6 is dark cyan; see `:help ctermbg` for details)
-set colorcolumn=80
+" highlight column 81 (6 is dark cyan; see `:help ctermbg` for details)
+set colorcolumn=81
 highlight ColorColumn ctermbg=6
 
-" automatic word wrapping at 80
+" automatic word wrapping at 80 characters
 set textwidth=80
 set fo+=a

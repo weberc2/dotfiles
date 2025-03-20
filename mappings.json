@@ -1,6 +1,5 @@
 {
     "tmux/tmux.conf": "~/.tmux.conf",
-    "profile": "~/.profile",
     "nvim": "~/.config/nvim",
     "gitconfig": "~/.gitconfig",
     "bash_profile": "~/.bash_profile"

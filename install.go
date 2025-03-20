@@ -1,13 +1,14 @@
 package main
 
 import (
-	"encoding/json"
-	"github.com/fatih/color"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"sdfasdfencoding/json"
 	"strings"
+
+	"github.com/fatih/color"
 )
 
 func createSymlink(src, dst string) error {
@@ -16,12 +17,9 @@ func createSymlink(src, dst string) error {
 		return err
 	}
 
-	absDst, err := filepath.Abs(strings.Replace(
-		dst,
-		"~",
-		os.Getenv("HOME"),
-		-1,
-	))
+	absDst, err := filepath.Abs(
+		strings.Replace(dst, "~", os.Getenv("HOME"), -1),
+	)
 	if err != nil {
 		return err
 	}

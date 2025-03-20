@@ -1,7 +1,8 @@
 [user]
 	name = Craig Weber
-	email = craig.weber@tempus.com
+	email = weberc2@gmail.com
 [alias]
 	st = status
 [push]
 	default = matching
+	autoSetupRemote = true

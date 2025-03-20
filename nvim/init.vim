@@ -33,6 +33,6 @@ autocmd BufWritePre * :%s/\s\+$//e
 set colorcolumn=80
 highlight ColorColumn ctermbg=6
 
-" A recent upgrade to neovim seems to have changed the default mouse scrolling
-" behavior (scrolling in vim vs scrolling through my terminal's buffer)
-set mouse=a
+" automatic word wrapping at 80
+set textwidth=80
+set fo+=a
